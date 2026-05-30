@@ -4,7 +4,7 @@ A Smash Bros style gameplay mod for [IkemenGO](https://github.com/ikemen-engine/
 
 Transforms any IkemenGO installation into a Smash Bros style experience — percent damage, knockback scaling, blast zone KOs, stocks, and a minimal HUD. Works with up to 8 players in simul mode. Zero modifications to engine files.
 
-![Gameplay screenshot showing 4 players with percent and stock HUD](screenshot.png)
+![Gameplay](https://raw.githubusercontent.com/gianksp/ikemen-smash-mod/refs/heads/master/banner.jpg)
 
 ---
 
