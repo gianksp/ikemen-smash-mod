@@ -1,28 +1,62 @@
+#-------------------------------------------------------------------------------
+# ikemen-smash-mod.zss
+#-------------------------------------------------------------------------------
+# Smash Bros mechanics implemented as ZSS common states.
+# Injected into every fight via common.states in ikemen-smash-mod.lua.
+#
+# Runs inside statedef -2 which executes every frame for every character.
+#
+# VARIABLE USAGE:
+#   var(20)  percent damage counter
+#   var(21)  stocks remaining
+#   var(22)  dead flag (1 = out of stocks)
+#   fvar(0)  init flag (1 = initialized this match)
+#   fvar(1)  blast zone guard (prevents multi-trigger per event)
+#
+# BLAST ZONE BOUNDARIES (stage coordinates):
+#   right  > 250
+#   left   < -250
+#   top    < -250
+#   bottom > 200
+#
+# KNOCKBACK TUNING:
+#   velMul multiplier 0.008 = moderate scaling (default)
+#   Lower = gradual, harder to die. Higher = aggressive, easier to die.
+#-------------------------------------------------------------------------------
+
 [StateDef -2;]
 
-# Initialize once per character
+# INITIALIZATION
+# Runs once per character per match on the first frame.
+# Sets starting stocks and marks character as initialized.
 ignoreHitPause if fvar(0) = 0 {
     var(21) := 3;
     lifeSet{value: lifeMax}
     fvar(0) := 1;
 }
 
-# Percent damage accumulation
+# PERCENT DAMAGE ACCUMULATION
+# Every hit adds to var(20) proportional to damage.
+# Higher percent = more knockback from the scaling below.
 ignoreHitPause if getHitVar(damage) > 0 {
     var(20) := var(20) + getHitVar(damage) / 10;
 }
 
-# Prevent death from normal damage
+# LIFE LOCK
+# Prevents normal KO from damage — only blast zones can kill.
+# var(22) = 1 means dying via blast zone, so we allow life to reach 0.
 ignoreHitPause if fvar(0) > 0 && var(22) = 0 {
     lifeSet{value: lifeMax}
 }
 
-# Knockback scaling
+# KNOCKBACK SCALING
+# Applied during launch states (5030 = ground, 5031/5032 = air).
+# Tune the 0.008 multiplier to adjust knockback feel.
 ignoreHitPause if stateno = 5030 || stateno = 5031 || stateno = 5032 {
     velMul{x: 1 + var(20) * 0.008; y: 1 + var(20) * 0.008}
 }
 
-# Blast zone — right
+# BLAST ZONE — RIGHT
 if pos x > 250 && fvar(1) = 0 {
     fvar(1) := 1;
     var(21) := var(21) - 1;
@@ -41,7 +75,7 @@ if pos x > 250 && fvar(1) = 0 {
     }
 }
 
-# Blast zone — left
+# BLAST ZONE — LEFT
 if pos x < -250 && fvar(1) = 0 {
     fvar(1) := 1;
     var(21) := var(21) - 1;
@@ -60,7 +94,7 @@ if pos x < -250 && fvar(1) = 0 {
     }
 }
 
-# Blast zone — top
+# BLAST ZONE — TOP
 if pos y < -250 && fvar(1) = 0 {
     fvar(1) := 1;
     var(21) := var(21) - 1;
@@ -79,7 +113,7 @@ if pos y < -250 && fvar(1) = 0 {
     }
 }
 
-# Blast zone — bottom
+# BLAST ZONE — BOTTOM
 if pos y > 200 && fvar(1) = 0 {
     fvar(1) := 1;
     var(21) := var(21) - 1;
