@@ -1,0 +1,99 @@
+[StateDef -2;]
+
+# Initialize once per character
+ignoreHitPause if fvar(0) = 0 {
+    var(21) := 3;
+    lifeSet{value: lifeMax}
+    fvar(0) := 1;
+}
+
+# Percent damage accumulation
+ignoreHitPause if getHitVar(damage) > 0 {
+    var(20) := var(20) + getHitVar(damage) / 10;
+}
+
+# Prevent death from normal damage
+ignoreHitPause if fvar(0) > 0 && var(22) = 0 {
+    lifeSet{value: lifeMax}
+}
+
+# Knockback scaling
+ignoreHitPause if stateno = 5030 || stateno = 5031 || stateno = 5032 {
+    velMul{x: 1 + var(20) * 0.008; y: 1 + var(20) * 0.008}
+}
+
+# Blast zone — right
+if pos x > 250 && fvar(1) = 0 {
+    fvar(1) := 1;
+    var(21) := var(21) - 1;
+    if var(21) > 0 {
+        var(20) := 0;
+        fvar(1) := 0;
+        posSet{x: 0; y: 0}
+        velSet{x: 0; y: 0}
+        lifeSet{value: lifeMax}
+        changeState{value: 52}
+    }
+    if var(21) <= 0 {
+        var(22) := 1;
+        posAdd{x: 1000}
+        lifeSet{value: 0}
+    }
+}
+
+# Blast zone — left
+if pos x < -250 && fvar(1) = 0 {
+    fvar(1) := 1;
+    var(21) := var(21) - 1;
+    if var(21) > 0 {
+        var(20) := 0;
+        fvar(1) := 0;
+        posSet{x: 0; y: 0}
+        velSet{x: 0; y: 0}
+        lifeSet{value: lifeMax}
+        changeState{value: 52}
+    }
+    if var(21) <= 0 {
+        var(22) := 1;
+        posAdd{x: -1000}
+        lifeSet{value: 0}
+    }
+}
+
+# Blast zone — top
+if pos y < -250 && fvar(1) = 0 {
+    fvar(1) := 1;
+    var(21) := var(21) - 1;
+    if var(21) > 0 {
+        var(20) := 0;
+        fvar(1) := 0;
+        posSet{x: 0; y: 0}
+        velSet{x: 0; y: 0}
+        lifeSet{value: lifeMax}
+        changeState{value: 52}
+    }
+    if var(21) <= 0 {
+        var(22) := 1;
+        posAdd{y: -1000}
+        lifeSet{value: 0}
+    }
+}
+
+# Blast zone — bottom
+if pos y > 200 && fvar(1) = 0 {
+    fvar(1) := 1;
+    var(21) := var(21) - 1;
+    if var(21) > 0 {
+        var(20) := 0;
+        fvar(1) := 0;
+        posSet{x: 0; y: 0}
+        velSet{x: 0; y: 0}
+        lifeSet{value: lifeMax}
+        changeState{value: 52}
+    }
+    if var(21) <= 0 {
+        var(22) := 1;
+        posAdd{y: 1000}
+        lifeSet{value: 0}
+    }
+}
