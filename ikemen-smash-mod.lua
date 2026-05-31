@@ -61,6 +61,7 @@ local smash = {
         percent = 20,   -- var(20): percent damage counter
         stocks  = 21,   -- var(21): stocks remaining
         dead    = 22,   -- var(22): death flag
+        airjump = 23,   -- var(23): double jump
     },
 
     -- Blast zone boundaries in stage coordinates.

@@ -69,6 +69,7 @@ local smash = {
         percent = 20, -- ZSS var index for percent (change if conflicting)
         stocks  = 21, -- ZSS var index for stocks
         dead    = 22, -- ZSS var index for death flag
+        airjump = 23, -- ZSS var index for double jump
     },
 
     blast = {
@@ -155,6 +156,7 @@ end
 | `var(20)` | Percent damage counter |
 | `var(21)` | Stocks remaining |
 | `var(22)` | Dead flag (1 = out of stocks) |
+| `var(23)` | Double jump (1 = double jump exhausted) |
 | `fvar(0)` | Init flag (1 = initialized this match) |
 | `fvar(1)` | Blast zone guard (prevents multi-trigger) |
 
