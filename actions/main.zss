@@ -1,0 +1,68 @@
+#-------------------------------------------------------------------------------
+# ikemen-smash-mod.zss — Main entry point
+#
+# VARIABLE USAGE:
+#   var(20)  percent damage counter
+#   var(21)  stocks remaining
+#   var(22)  dead flag (1 = out of stocks)
+#   var(23)  double jump used flag
+#   fvar(0)  init flag
+#   fvar(1)  blast zone guard
+#   fvar(2)  last hittime (hit detection)
+#-------------------------------------------------------------------------------
+
+[StateDef -2;]
+
+ignoreHitPause if fvar(0) = 0 {
+    # State
+    var(20) := 0;
+    var(21) := 3;
+    var(22) := 0;
+    var(23) := 0;
+    var(24) := 0;  # hittime tracker
+    var(25) := 0;  # ReceivedDamage tracker
+    fvar(0) := 1;
+    fvar(1) := 0;
+    fvar(2) := 0;
+    lifeSet{value: lifeMax}
+
+    # Knockback
+    map(kb.multiplier) := 0.05;
+    map(kb.xscale)     := 25;   # was 0.08 — direct velocity, not a multiplier
+    map(kb.yscale)     := 15;   # upward launch force
+    map(kb.yadd)       := 0.6;
+
+    # Blast zones
+    map(blast.right)   := 500;
+    map(blast.left)    := -500;
+    map(blast.top)     := -250;
+    map(blast.bottom)  := 750;
+
+    # Camera
+    map(cam.zoom.start)    := 0.5;
+    map(cam.zoom.min)      := 0.2;
+    map(cam.spread.xmin)   := 200;
+    map(cam.spread.xmax)   := 500;
+    map(cam.spread.ymin)   := 200;
+    map(cam.spread.ymax)   := 500;
+    map(cam.bound.left)    := -500;
+    map(cam.bound.right)   := 500;
+    map(cam.bound.high)    := -1000;
+    map(cam.tension)       := 40;
+    map(cam.tension.high)  := 80;
+    map(cam.tension.low)   := 50;
+    map(cam.vert.follow)   := 0.4;
+
+    # Double jump
+    map(dj.yvel) := -9;
+}
+
+# Life lock — only blast zones can kill
+ignoreHitPause if fvar(0) > 0 && var(22) = 0 {
+   lifeSet{value: lifeMax}
+}
+
+call SmashKnockback();
+call SmashBlastZones();
+call SmashDoubleJump();
+call SmashCamera();

@@ -1,0 +1,90 @@
+#-------------------------------------------------------------------------------
+# ikemen-smash-blastzones.zss
+# Kills or respawns players that leave blast zone boundaries.
+#-------------------------------------------------------------------------------
+
+[Function SmashBlastZones()]
+
+# RIGHT
+if pos x > Map(blast.right) && fvar(1) = 0 {
+    fvar(1) := 1;
+    var(21) := var(21) - 1;
+    if var(21) > 0 {
+        var(20) := 0;
+        fvar(1) := 0;
+        fvar(2) := 0;
+        var(25) := 0;
+        posSet{x: 0; y: 0}
+        velSet{x: 0; y: 0}
+        lifeSet{value: lifeMax}
+        changeState{value: 52}
+    }
+    if var(21) <= 0 {
+        var(22) := 1;
+        posAdd{x: 1000}
+        lifeSet{value: 0}
+    }
+}
+
+# LEFT
+if pos x < Map(blast.left) && fvar(1) = 0 {
+    fvar(1) := 1;
+    var(21) := var(21) - 1;
+    if var(21) > 0 {
+        var(20) := 0;
+        fvar(1) := 0;
+        fvar(2) := 0;
+        var(25) := 0;
+        posSet{x: 0; y: 0}
+        velSet{x: 0; y: 0}
+        lifeSet{value: lifeMax}
+        changeState{value: 52}
+    }
+    if var(21) <= 0 {
+        var(22) := 1;
+        posAdd{x: -1000}
+        lifeSet{value: 0}
+    }
+}
+
+# TOP
+if pos y < Map(blast.top) && fvar(1) = 0 {
+    fvar(1) := 1;
+    var(21) := var(21) - 1;
+    if var(21) > 0 {
+        var(20) := 0;
+        fvar(1) := 0;
+        fvar(2) := 0;
+        var(25) := 0;
+        posSet{x: 0; y: 0}
+        velSet{x: 0; y: 0}
+        lifeSet{value: lifeMax}
+        changeState{value: 52}
+    }
+    if var(21) <= 0 {
+        var(22) := 1;
+        posAdd{y: -1000}
+        lifeSet{value: 0}
+    }
+}
+
+# BOTTOM
+if pos y > Map(blast.bottom) && fvar(1) = 0 {
+    fvar(1) := 1;
+    var(21) := var(21) - 1;
+    if var(21) > 0 {
+        var(20) := 0;
+        fvar(1) := 0;
+        fvar(2) := 0;
+        var(25) := 0;
+        posSet{x: 0; y: 0}
+        velSet{x: 0; y: 0}
+        lifeSet{value: lifeMax}
+        changeState{value: 52}
+    }
+    if var(21) <= 0 {
+        var(22) := 1;
+        posAdd{y: 1000}
+        lifeSet{value: 0}
+    }
+}

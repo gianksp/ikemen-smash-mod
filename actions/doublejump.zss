@@ -1,0 +1,21 @@
+#-------------------------------------------------------------------------------
+# ikemen-smash-doublejump.zss
+# Grants one extra jump while airborne.
+#
+# VARIABLES:
+#   var(23) = 0: jump available, 1: jump used
+#-------------------------------------------------------------------------------
+
+[Function SmashDoubleJump()]
+
+# Reset on landing
+ignoreHitPause if (stateno = 52 || stateno = 0) && var(23) = 1 {
+    var(23) := 0;
+}
+
+# Execute double jump
+if stateType = A && ctrl = 1 && var(23) = 0 && command = "holdup" {
+    var(23) := 1;
+    velSet{y: Map(dj.yvel)}
+    changeState{value: 40}
+}

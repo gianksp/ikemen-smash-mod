@@ -1,0 +1,39 @@
+#-------------------------------------------------------------------------------
+# ikemen-smash-knockback.zss
+# Percent accumulation and knockback scaling.
+#-------------------------------------------------------------------------------
+
+[Function SmashKnockback()]
+
+# Accumulate percent on each hit
+ignoreHitPause if ReceivedDamage > var(25) {
+    var(20) := var(20) + (ReceivedDamage - var(25)) * 0.1;
+    var(25) := ReceivedDamage;
+    printToConsole{text: "HIT received=%d percent=%d"; params: ReceivedDamage, var(20)}
+}
+
+ignoreHitPause if ReceivedDamage = 0 && var(25) > 0 {
+    var(25) := 0;
+}
+
+# Scale ALL hit velocity every frame while being hit
+# This makes every attack push further as % increases
+ignoreHitPause if moveType = H {
+    let pct   = Float(var(20));
+    let scale = 1 + ($pct / 100) ** 2 * Map(kb.multiplier);
+
+    velMul{x: $scale; y: $scale}
+}
+
+# On launch states specifically — override with a strong direct velocity
+ignoreHitPause if (stateno = 5000 || stateno = 5001 || stateno = 5010 || stateno = 5011) && time = 0 {
+    let pct   = Float(var(20));
+    let scale = ($pct / 100) ** 2 * Map(kb.multiplier);
+
+    velSet{
+        x: $scale * facing * Map(kb.xscale);
+        y: -($scale * Map(kb.yscale));
+    }
+
+    printToConsole{text: "KNOCKBACK pct=%f scale=%f velX=%f velY=%f"; params: $pct, $scale, vel x, vel y}
+}

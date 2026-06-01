@@ -108,13 +108,17 @@ hook.add("launchFight", "smash_fight", function(common, t, data)
     -- Inject ZSS state script.
     -- Runs as common states for ALL characters, every frame.
     common.states = common.states or {}
-    table.insert(common.states, "external/mods/ikemen-smash-mod/ikemen-smash-mod.zss")
+    table.insert(common.states, "external/mods/ikemen-smash-mod/actions/camera.zss")
+    table.insert(common.states, "external/mods/ikemen-smash-mod/actions/blastzones.zss")
+    table.insert(common.states, "external/mods/ikemen-smash-mod/actions/doublejump.zss")
+    table.insert(common.states, "external/mods/ikemen-smash-mod/actions/knockback.zss")
+    table.insert(common.states, "external/mods/ikemen-smash-mod/actions/main.zss")
 
     -- Inject per-frame Lua scripts.
     -- Each file is read as a string and run every frame during the fight.
     common.lua = common.lua or {}
-    table.insert(common.lua, main.f_fileRead("external/mods/ikemen-smash-mod/hud.lua"))
-    table.insert(common.lua, main.f_fileRead("external/mods/ikemen-smash-mod/win.lua"))
+    table.insert(common.lua, main.f_fileRead("external/mods/ikemen-smash-mod/engine/hud.lua"))
+    table.insert(common.lua, main.f_fileRead("external/mods/ikemen-smash-mod/engine/win.lua"))
 
     -- Uncomment to enable debug overlay (shows player sides):
     -- table.insert(common.lua, main.f_fileRead("external/mods/ikemen-smash-mod/debug.lua"))

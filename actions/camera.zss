@@ -1,0 +1,51 @@
+#-------------------------------------------------------------------------------
+# ikemen-smash-camera.zss
+# Smash Bros style camera — zooms to fit all players.
+#-------------------------------------------------------------------------------
+
+[Function SmashCamera()]
+
+if PlayerNo = 1 {
+    let minX = Player(1), Pos X;
+    let maxX = Player(1), Pos X;
+    let minY = Player(1), Pos Y;
+    let maxY = Player(1), Pos Y;
+
+    for i = 1; NumPlayer - 1; 1 {
+        if PlayerIndexExist($i) {
+            if !PlayerIndex($i), IsHelper {
+                let px = PlayerIndex($i), Pos X;
+                let py = PlayerIndex($i), Pos Y;
+
+                if $px < $minX { let minX = $px; }
+                if $px > $maxX { let maxX = $px; }
+                if $py < $minY { let minY = $py; }
+                if $py > $maxY { let maxY = $py; }
+            }
+        }
+    }
+
+    let spreadX = $maxX - $minX;
+    let spreadY = abs($minY - $maxY);
+
+    let tX = Clamp(($spreadX - Map(cam.spread.xmin)) / Map(cam.spread.xmax), 0, 1);
+    let tY = Clamp(($spreadY - Map(cam.spread.ymin)) / Map(cam.spread.ymax), 0, 1);
+    let t  = Max($tX, $tY);
+
+    let targetZoom = Lerp(Map(cam.zoom.start), Map(cam.zoom.min), $t);
+
+    modifyStageVar{
+        camera.startzoom:    $targetZoom;
+        camera.zoomin:       Map(cam.zoom.start);
+        camera.zoomout:      Map(cam.zoom.min);
+        camera.boundleft:    Map(cam.bound.left);
+        camera.boundright:   Map(cam.bound.right);
+        camera.boundhigh:    Map(cam.bound.high);
+        camera.tension:      Map(cam.tension);
+        camera.tensionhigh:  Map(cam.tension.high);
+        camera.tensionlow:   Map(cam.tension.low);
+        camera.verticalfollow: Map(cam.vert.follow);
+    }
+
+    camera{view: Fighting}
+}
