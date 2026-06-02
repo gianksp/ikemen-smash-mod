@@ -67,4 +67,5 @@ call SmashBlastZones();
 call SmashDoubleJump();
 call SmashPortraits();
 call SmashPlayerArrow();
+call SmashAutoTurn();
 call SmashCamera();

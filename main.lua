@@ -54,11 +54,15 @@ hook.add("launchFight", "smash_fight", function(common, t, data)
     table.insert(common.states, "external/mods/ikemen-smash-mod/actions/doublejump.zss")
     table.insert(common.states, "external/mods/ikemen-smash-mod/actions/knockback.zss")
     table.insert(common.states, "external/mods/ikemen-smash-mod/actions/playerarrow.zss")
+    table.insert(common.states, "external/mods/ikemen-smash-mod/actions/autoturn.zss")
     table.insert(common.states, "external/mods/ikemen-smash-mod/actions/main.zss")
 
     common.lua = common.lua or {}
     table.insert(common.lua, main.f_fileRead("external/mods/ikemen-smash-mod/engine/hud.lua"))
     table.insert(common.lua, main.f_fileRead("external/mods/ikemen-smash-mod/engine/win.lua"))
+
+    common.cmd = common.cmd or {}
+    table.insert(common.cmd, "external/mods/ikemen-smash-mod/commands.cmd")
 end)
 
 -- Load portraits once fight starts using animGetPreloadedCharData

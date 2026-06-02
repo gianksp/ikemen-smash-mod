@@ -1,0 +1,10 @@
+[Function SmashAutoTurn()]
+
+ignoreHitPause if fvar(0) = 1 {
+    assertSpecial{flag: noautoturn}
+}
+
+#-------------------------------------- MANUAL TURN ----------------------------------------------
+if ctrl = 1 && command = "BBB" {
+    turn{}
+}
