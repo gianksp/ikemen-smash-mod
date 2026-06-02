@@ -1,63 +1,69 @@
---[[
-================================================================================
-hud.lua
---------------------------------------------------------------------------------
-Per-frame HUD rendering for the Smash mod.
-Injected into every fight via common.lua in ikemen-smash-mod.lua.
+-- hud.lua - Smash Bros style HUD
+if not gameRunning() then
+    return
+end
 
-Displays percent damage and stock count for each active player
-at the bottom of the screen, evenly distributed by player count.
+local screenW = 320
+local screenH = 240
+local n = smashPlayerCount or math.min(numPlayer(), 4)
+local slotW = screenW / math.max(n, 1)
+local f = fontNew("font/f-6x9.def")
 
-LAYOUT:
-  Players are spaced evenly across the screen width.
-  Each slot shows:
-    P{n}         player number
-    {x}%         current percent damage
-    [{s}]        stocks remaining
-
-SCREEN COORDINATES:
-  Based on stage localcoord = 320, 240.
-  If your stage uses a different localcoord, adjust screenW and screenH.
-
-VARIABLE READS (via ZSS vars set in ikemen-smash-mod.zss):
-  var(20)  percent damage
-  var(21)  stocks remaining
-
-NOTE:
-  This file is read as a plain string by main.f_fileRead() and passed
-  to common.lua. It runs in the commonLua context, not the module context.
-  No access to upvalues from ikemen-smash-mod.lua.
-
-  player(i) sets the redirect context — subsequent trigger calls
-  (var, life, teamSide, etc.) read from that player until redirected again.
-================================================================================
---]]
-
-if gameRunning() then
-    local n       = numPlayer()
-    local screenW = 320
-    local screenH = 240
-    local slotW   = screenW / math.max(n, 1)
-    local f       = fontNew("font/f-6x9.def")
-
-    for i = 1, n do
-        -- Redirect all trigger calls to player i
-        player(i)
-
-        local pct    = math.floor(var(20))
-        local stocks = math.floor(var(21))
-
-        local img = textImgNew()
-        textImgSetFont(img, f)
-        textImgSetScale(img, 1, 1)
-        textImgSetLayerno(img, 9)           -- render on top of everything
-        textImgSetColor(img, 255, 255, 0)   -- yellow
-        textImgSetAlign(img, 0)             -- center aligned
-        textImgSetText(img, "P"..i.."\n"..pct.."%\n["..stocks.."]")
-
-        -- Center text within this player's horizontal slot
-        local x = (i - 1) * slotW + slotW / 2
-        textImgSetPos(img, x, screenH - 30)
-        textImgDraw(img)
+local function percentColor(pct)
+    if pct < 50 then
+        return 255, 255, 255
     end
+    if pct < 100 then
+        return 255, 210, 0
+    end
+    if pct < 150 then
+        return 255, 100, 0
+    end
+    return 255, 30, 30
+end
+
+local function drawText(text, x, y, sx, sy, r, g, b, layer)
+    local img = textImgNew()
+    textImgSetFont(img, f)
+    textImgSetScale(img, sx, sy)
+    textImgSetLayerno(img, layer or 9)
+    textImgSetColor(img, r, g, b)
+    textImgSetAlign(img, 0)
+    textImgSetText(img, text)
+    textImgSetPos(img, x, y)
+    textImgDraw(img)
+end
+
+for i = 1, n do
+    player(i)
+
+    local pct = math.max(math.floor(var(20)), 0)
+    local stocks = math.max(math.floor(var(21)), 0)
+    local cx = (i - 1) * slotW + slotW / 2
+    local baseY = screenH - 20
+
+    -- Background panel
+    -- drawText(string.rep("_", 12), cx, baseY - 6, 1.1, 2.8, 15, 15, 20, 8)
+
+    -- Player label
+    drawText("P" .. i, cx, baseY, 0.8, 0.8, 180, 180, 255, 9)
+
+    -- Percent
+    local r, g, b = percentColor(pct)
+    drawText(pct .. "%", cx + 5, baseY + 10, 1, 1, r, g, b, 9)
+
+    -- Stock dots
+    local dots = string.rep("* ", stocks):gsub(" $", "")
+    drawText(dots, cx + 13, baseY, 0.3, 0.8, 255, 255, 255, 9)
+
+    local worldX = fvar(10)
+    local worldY = fvar(11)
+    -- Convert world pos to screen pos (approximate)
+    local sx = screenW / 2 + worldX * 0.5
+    local sy = screenH / 2 + worldY * 0.5
+
+    -- Player label above character
+    drawText("P" .. i, sx, math.max(sy + 20, 5), 0.8, 0.8, 180, 180, 255, 9)
+    drawText("v", sx, math.max(sy + 28, 15), 0.7, 0.7, 180, 180, 255, 9)
+
 end

@@ -1,0 +1,6 @@
+[Function SmashPlayerArrow()]
+# Store player screen position in vars every frame
+ignoreHitPause if fvar(0) = 1 {
+    varSet{fv: 10; value: Pos X}
+    varSet{fv: 11; value: Pos Y}
+}
